@@ -59,49 +59,53 @@ backpacks.allow_metadata_inventory_put = function(pos, listname, index, stack, p
 	end
 end
 
+minetest.register_alias("backpacks:backpack_wool", "backpacks:backpack_wool_white")
 -- Wool backpack
-minetest.register_node("backpacks:backpack_wool", {
-	description = "Wool Backpack",
-	tiles = {
-		"wool_white.png^backpacks_backpack_topbottom.png", -- Top
-		"wool_white.png^backpacks_backpack_topbottom.png", -- Bottom
-		"wool_white.png^backpacks_backpack_sides.png",     -- Right Side
-		"wool_white.png^backpacks_backpack_sides.png",     -- Left Side
-		"wool_white.png^backpacks_backpack_back.png",      -- Back
-		"wool_white.png^backpacks_backpack_front.png"      -- Front
-	},
-	drawtype = "nodebox",
-	paramtype = "light",
-	paramtype2 = "facedir",
-	node_box = {
-		type = "fixed",
-		fixed = {
-			{-0.4375, -0.5, -0.375, 0.4375, 0.5, 0.375},
-			{0.125, -0.375, 0.4375, 0.375, 0.3125, 0.5},
-			{-0.375, -0.375, 0.4375, -0.125, 0.3125, 0.5},
-			{0.125, 0.1875, 0.375, 0.375, 0.375, 0.4375},
-			{-0.375, 0.1875, 0.375, -0.125, 0.375, 0.4375},
-			{0.125, -0.375, 0.375, 0.375, -0.25, 0.4375},
-			{-0.375, -0.375, 0.375, -0.125, -0.25, 0.4375},
-			{-0.3125, -0.375, -0.4375, 0.3125, 0.1875, -0.375},
-			{-0.25, -0.3125, -0.5, 0.25, 0.125, -0.4375},
+for k, v in ipairs(dye.dyes) do
+	print(v[1], v[2])
+	minetest.register_node("backpacks:backpack_wool_" .. v[1], {
+		description = "Wool Backpack (" .. v[2] .. ")",
+		tiles = {
+			"wool_" .. v[1] .. ".png^backpacks_backpack_topbottom.png", -- Top
+			"wool_" .. v[1] .. ".png^backpacks_backpack_topbottom.png", -- Bottom
+			"wool_" .. v[1] .. ".png^backpacks_backpack_sides.png",     -- Right Side
+			"wool_" .. v[1] .. ".png^backpacks_backpack_sides.png",     -- Left Side
+			"wool_" .. v[1] .. ".png^backpacks_backpack_back.png",      -- Back
+			"wool_" .. v[1] .. ".png^backpacks_backpack_front.png"      -- Front
+		},
+		drawtype = "nodebox",
+		paramtype = "light",
+		paramtype2 = "facedir",
+		node_box = {
+			type = "fixed",
+			fixed = {
+				{-0.4375, -0.5, -0.375, 0.4375, 0.5, 0.375},
+				{0.125, -0.375, 0.4375, 0.375, 0.3125, 0.5},
+				{-0.375, -0.375, 0.4375, -0.125, 0.3125, 0.5},
+				{0.125, 0.1875, 0.375, 0.375, 0.375, 0.4375},
+				{-0.375, 0.1875, 0.375, -0.125, 0.375, 0.4375},
+				{0.125, -0.375, 0.375, 0.375, -0.25, 0.4375},
+				{-0.375, -0.375, 0.375, -0.125, -0.25, 0.4375},
+				{-0.3125, -0.375, -0.4375, 0.3125, 0.1875, -0.375},
+				{-0.25, -0.3125, -0.5, 0.25, 0.125, -0.4375},
+			}
+		},
+		groups = {dig_immediate = 3, oddly_diggable_by_hand = 3},
+		stack_max = 1,
+		on_construct = backpacks.on_construct,
+		after_place_node = backpacks.after_place_node,
+		on_dig = backpacks.on_dig,
+		allow_metadata_inventory_put = backpacks.allow_metadata_inventory_put,
+	})
+	minetest.register_craft({
+		output = "backpacks:backpack_wool_" .. v[1],
+		recipe = {
+			{"wool:" .. v[1], "wool:" .. v[1], "wool:" .. v[1]},
+			{"wool:" .. v[1], "", "wool:" .. v[1]},
+			{"wool:" .. v[1], "wool:" .. v[1], "wool:" .. v[1]},
 		}
-	},
-	groups = {dig_immediate = 3, oddly_diggable_by_hand = 3},
-	stack_max = 1,
-	on_construct = backpacks.on_construct,
-	after_place_node = backpacks.after_place_node,
-	on_dig = backpacks.on_dig,
-	allow_metadata_inventory_put = backpacks.allow_metadata_inventory_put,
-})
-minetest.register_craft({
-	output = "backpacks:backpack_wool",
-	recipe = {
-		{"group:wool", "group:wool", "group:wool"},
-		{"group:wool", "", "group:wool"},
-		{"group:wool", "group:wool", "group:wool"},
-	}
-})
+	})
+end
 
 -- Leather backpack
 minetest.register_node("backpacks:backpack_leather", {
@@ -138,11 +142,13 @@ minetest.register_node("backpacks:backpack_leather", {
 	on_dig = backpacks.on_dig,
 	allow_metadata_inventory_put = backpacks.allow_metadata_inventory_put,
 })
-minetest.register_craft({
-	output = "backpacks:backpack_leather",
-	recipe = {
-		{"mobs:leather", "mobs:leather", "mobs:leather"},
-		{"mobs:leather", "", "mobs:leather"},
-		{"mobs:leather", "mobs:leather", "mobs:leather"},
-	}
-})
+if minetest.get_modpath("mobs") then
+	minetest.register_craft({
+		output = "backpacks:backpack_leather",
+		recipe = {
+			{"mobs:leather", "mobs:leather", "mobs:leather"},
+			{"mobs:leather", "", "mobs:leather"},
+			{"mobs:leather", "mobs:leather", "mobs:leather"},
+		}
+	})
+end
