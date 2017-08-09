@@ -62,7 +62,6 @@ end
 minetest.register_alias("backpacks:backpack_wool", "backpacks:backpack_wool_white")
 -- Wool backpack
 for k, v in ipairs(dye.dyes) do
-	print(v[1], v[2])
 	minetest.register_node("backpacks:backpack_wool_" .. v[1], {
 		description = "Wool Backpack (" .. v[2] .. ")",
 		tiles = {
