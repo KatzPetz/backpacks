@@ -14,7 +14,7 @@ backpacks.on_construct = function(pos)
 	meta:set_string("infotext", "Backpack")
 	meta:set_string("formspec", backpacks.form)
 	local inv = meta:get_inventory()
-	inv:set_size("main", 8*2)
+	inv:set_size("main", 8 * 2)
 end
 backpacks.after_place_node = function(pos, placer, itemstack, pointed_thing)
 	local meta = minetest.get_meta(pos)
@@ -58,6 +58,26 @@ backpacks.allow_metadata_inventory_put = function(pos, listname, index, stack, p
 		return 0
 	end
 end
+backpacks.preserve_metadata = function(pos, oldnode, oldmeta, drops)
+	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+	local list = {}
+	for i, stack in ipairs(inv:get_list("main")) do
+		if stack:get_name() == "" then
+			list[i] = ""
+		else
+			list[i] = stack:to_string()
+		end
+	end
+	local new_list = {inventory = {main = list},
+			fields = {infotext = "Backpack", formspec = backpacks.form}}
+	local new_list_as_string = minetest.serialize(new_list)
+	local new = ItemStack(oldnode)
+	new:set_metadata(new_list_as_string)
+	if drops and drops[1] then
+		drops[1] = new
+	end
+end
 
 minetest.register_alias("backpacks:backpack_wool", "backpacks:backpack_wool_white")
 -- Wool backpack
@@ -89,12 +109,13 @@ for k, v in ipairs(dye.dyes) do
 				{-0.25, -0.3125, -0.5, 0.25, 0.125, -0.4375},
 			}
 		},
-		groups = {dig_immediate = 3, oddly_diggable_by_hand = 3},
+		groups = {dig_immediate = 3, oddly_diggable_by_hand = 3, attached_node = 1},
 		stack_max = 1,
 		on_construct = backpacks.on_construct,
 		after_place_node = backpacks.after_place_node,
 		on_dig = backpacks.on_dig,
 		allow_metadata_inventory_put = backpacks.allow_metadata_inventory_put,
+		preserve_metadata = backpacks.preserve_metadata
 	})
 	minetest.register_craft({
 		output = "backpacks:backpack_wool_" .. v[1],
@@ -134,12 +155,13 @@ minetest.register_node("backpacks:backpack_leather", {
 			{-0.25, -0.3125, -0.5, 0.25, 0.125, -0.4375},
 		}
 	},
-	groups = {dig_immediate = 3, oddly_diggable_by_hand = 3},
+	groups = {dig_immediate = 3, oddly_diggable_by_hand = 3, attached_node = 1},
 	stack_max = 1,
 	on_construct = backpacks.on_construct,
 	after_place_node = backpacks.after_place_node,
 	on_dig = backpacks.on_dig,
 	allow_metadata_inventory_put = backpacks.allow_metadata_inventory_put,
+	preserve_metadata = backpacks.preserve_metadata
 })
 if minetest.get_modpath("mobs") then
 	minetest.register_craft({
