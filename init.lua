@@ -58,6 +58,7 @@ backpacks.allow_metadata_inventory_put = function(pos, listname, index, stack, p
 		return 0
 	end
 end
+--[[
 backpacks.preserve_metadata = function(pos, oldnode, oldmeta, drops)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
@@ -78,6 +79,7 @@ backpacks.preserve_metadata = function(pos, oldnode, oldmeta, drops)
 		drops[1] = new
 	end
 end
+--]]
 
 minetest.register_alias("backpacks:backpack_wool", "backpacks:backpack_wool_white")
 -- Wool backpack
@@ -109,7 +111,7 @@ for k, v in ipairs(dye.dyes) do
 				{-0.25, -0.3125, -0.5, 0.25, 0.125, -0.4375},
 			}
 		},
-		groups = {dig_immediate = 3, oddly_diggable_by_hand = 3, attached_node = 1},
+		groups = {dig_immediate = 3, oddly_diggable_by_hand = 3},--, attached_node = 1},
 		stack_max = 1,
 		on_construct = backpacks.on_construct,
 		after_place_node = backpacks.after_place_node,
