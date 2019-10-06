@@ -8,7 +8,9 @@ backpacks.form = "size[8,7]" ..
 	"list[current_player;main;0,2.85;8,1]" ..
 	"list[current_player;main;0,4.08;8,3;8]" ..
 	"listring[current_name;main]" ..
-	"listring[current_player;main]"
+	"listring[current_player;main]" ..
+""
+
 backpacks.on_construct = function(pos)
 	local meta = minetest.get_meta(pos)
 	meta:set_string("infotext", "Backpack")
@@ -16,6 +18,7 @@ backpacks.on_construct = function(pos)
 	local inv = meta:get_inventory()
 	inv:set_size("main", 8 * 2)
 end
+
 backpacks.after_place_node = function(pos, placer, itemstack, pointed_thing)
 	local meta = minetest.get_meta(pos)
 	local stuff = minetest.deserialize(itemstack:get_metadata())
@@ -24,6 +27,7 @@ backpacks.after_place_node = function(pos, placer, itemstack, pointed_thing)
 	end
 	itemstack:take_item()
 end
+
 backpacks.on_dig = function(pos, node, digger)
 	if minetest.is_protected(pos, digger:get_player_name()) then
 		return false
@@ -51,6 +55,7 @@ backpacks.on_dig = function(pos, node, digger)
 		minetest.add_item(pos, new)
 	end
 end
+
 backpacks.allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 	if not string.match(stack:get_name(), "backpacks:backpack_") then
 		return stack:get_count()
@@ -58,7 +63,7 @@ backpacks.allow_metadata_inventory_put = function(pos, listname, index, stack, p
 		return 0
 	end
 end
----[[
+
 backpacks.preserve_metadata = function(pos, oldnode, oldmeta, drops)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
@@ -79,11 +84,29 @@ backpacks.preserve_metadata = function(pos, oldnode, oldmeta, drops)
 		drops[1] = new
 	end
 end
---]]
 
 minetest.register_alias("backpacks:backpack_wool", "backpacks:backpack_wool_white")
+
 -- Wool backpack
-for k, v in ipairs(dye.dyes) do
+local dyes = {
+	{"white",      "White"},
+	{"grey",       "Grey"},
+	{"dark_grey",  "Dark Grey"},
+	{"black",      "Black"},
+	{"violet",     "Violet"},
+	{"blue",       "Blue"},
+	{"cyan",       "Cyan"},
+	{"dark_green", "Dark Green"},
+	{"green",      "Green"},
+	{"yellow",     "Yellow"},
+	{"brown",      "Brown"},
+	{"orange",     "Orange"},
+	{"red",        "Red"},
+	{"magenta",    "Magenta"},
+	{"pink",       "Pink"},
+}
+
+for k, v in ipairs(dyes) do
 	minetest.register_node("backpacks:backpack_wool_" .. v[1], {
 		description = "Wool Backpack (" .. v[2] .. ")",
 		tiles = {
@@ -165,6 +188,7 @@ minetest.register_node("backpacks:backpack_leather", {
 	allow_metadata_inventory_put = backpacks.allow_metadata_inventory_put,
 	preserve_metadata = backpacks.preserve_metadata,
 })
+
 if minetest.get_modpath("mobs") then
 	minetest.register_craft({
 		output = "backpacks:backpack_leather",
